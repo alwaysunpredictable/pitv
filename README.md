@@ -55,8 +55,20 @@ waiting-room/
 
 ## Fresh Pi setup
 
+> **Before running setup, make sure your Pi is fully up to date.** Running setup
+> on a Pi mid-update can cause packages like mpv to silently fail to install.
+
 ```bash
-git clone git@github.com:alwaysunpredictable/waiting-room.git
+# 1. Update the system first (do this once after a fresh flash)
+sudo apt update && sudo apt full-upgrade -y
+sudo reboot
+```
+
+After it reboots:
+
+```bash
+# 2. Clone and install
+git clone https://github.com/alwaysunpredictable/pitv.git waiting-room
 cd waiting-room
 nano config.env          # set ADMIN_PASS, APP_SECRET is auto-generated
 sudo bash setup.sh
