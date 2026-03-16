@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 DEST="media/Big Buck Bunny"
 mkdir -p "$DEST"
 
-if [ -f "$DEST/Big Buck Bunny.mp4" ]; then
+if [ -f "$DEST/Big Buck Bunny.mp4" ] && [ -f "$DEST/Big Buck Bunny.png" ]; then
   echo "Already downloaded."
   exit 0
 fi
