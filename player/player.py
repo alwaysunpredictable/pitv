@@ -155,6 +155,16 @@ def main():
                 pass
             last_hb = now
 
+        # Picking timeout — reset if no video chosen within 2 minutes
+        if kget("mode") == "picking":
+            try:
+                since = int(kget("picking_since", "0") or "0")
+                if since and (time.time() - since) > 120:
+                    logging.info("Picking timeout — resetting to idle")
+                    reset_to_idle()
+            except Exception:
+                pass
+
         # Check stop flag
         if mpv_proc and mpv_proc.poll() is None:
             if kget("stop_requested", "0") == "1":

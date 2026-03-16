@@ -254,7 +254,7 @@ def post_pin():
 
     # Claim controller slot
     token = secrets.token_hex(24)
-    kset_many({"controller_token": token, "mode": "picking"})
+    kset_many({"controller_token": token, "mode": "picking", "picking_since": str(int(__import__("time").time()))})
     session["token"]     = token
     session.permanent    = False
     return redirect(url_for("home"))
