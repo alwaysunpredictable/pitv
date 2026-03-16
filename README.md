@@ -1,3 +1,13 @@
+## Screenshots
+
+| TV Display | PIN Entry | Pick a Video |
+|---|---|---|
+| ![TV](screenshots/tv.png) | ![PIN](screenshots/controller.png) | ![Pick](screenshots/pickavideo.png) |
+
+| Now Playing | Admin |
+|---|---|
+| ![Now Playing](screenshots/nowplaying.png) | ![Admin](screenshots/Admin.png) |
+
 # Waiting Room TV Kiosk
 
 A Raspberry Pi kiosk that lets people in a waiting room pick what plays on the TV.
