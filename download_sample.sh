@@ -18,7 +18,7 @@ curl -L --progress-bar \
   -o "$DEST/Big Buck Bunny.mp4"
 
 echo "Generating poster..."
-python3 - << 'EOF'
+/home/pitv/waiting-room/env/bin/python3 - << 'EOF'
 from PIL import Image, ImageDraw, ImageFont
 img = Image.new("RGB", (400, 600), color=(30, 20, 60))
 draw = ImageDraw.Draw(img)
