@@ -100,6 +100,16 @@ async function stopVideo() {
   }
 }
 
+// Passive background check — catches admin reset or natural video end
+setInterval(async () => {
+  if (stopping) return;
+  try {
+    const r  = await fetch("/api/state");
+    const st = await r.json();
+    if (st.mode !== "playing") location.href = "/";
+  } catch {}
+}, 3000);
+
 async function pollForIdle() {
   try {
     const r  = await fetch('/api/state');
