@@ -240,19 +240,15 @@ def post_pin():
     st   = get_state()
     mode = st["mode"]
 
-    # Only accept new logins when idle
-    if mode != "idle":
+    # Block if a video is already playing
+    if mode == "playing":
         return render_template("wait.html", mode=mode, title=st["now_title"])
 
     pin = (request.form.get("pin") or "").strip()
     if pin != st["pin"]:
         return render_template("pin.html", error="Wrong PIN — check the screen and try again.")
 
-    # If someone already claimed the slot (race), tell them to wait
-    if st["controller_token"]:
-        return render_template("wait.html", mode="picking", title="")
-
-    # Claim controller slot
+    # Claim or reclaim the controller slot (re-entering PIN restores access)
     token = secrets.token_hex(24)
     kset_many({"controller_token": token, "mode": "picking", "picking_since": str(int(__import__("time").time()))})
     session["token"]     = token
