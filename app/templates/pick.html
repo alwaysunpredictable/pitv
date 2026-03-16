@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pick a video</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    :root {
+      --bg: #0B0B10; --card: #16161E; --border: #24243A;
+      --accent: #C9973A; --fg: #F0F2FF; --muted: #6A6A8A;
+    }
+    html, body {
+      min-height: 100dvh; background: var(--bg); color: var(--fg);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(11,11,16,0.92); backdrop-filter: blur(12px);
+      padding: 16px 16px 14px; border-bottom: 1px solid var(--border);
+    }
+    .header-inner { max-width: 900px; margin: 0 auto }
+    h1 { font-size: 20px; font-weight: 800 }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 3px }
+    .grid {
+      display: grid; gap: 14px; padding: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      max-width: 900px; margin: 0 auto;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px rgba(201,151,58,0.15);
+    }
+    .card img {
+      display: block; width: 100%; aspect-ratio: 2/3; object-fit: cover;
+    }
+    .card-title {
+      padding: 10px 10px 12px; font-size: 13px; font-weight: 700;
+      line-height: 1.3;
+    }
+    .empty { color: var(--muted); padding: 40px 20px; text-align: center; font-size: 15px }
+
+    /* Confirm overlay */
+    #overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+      z-index: 100;
+    }
+    #overlay.open { display: flex }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px 24px 22px;
+      max-width: 380px; width: 100%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .modal h2 { font-size: 20px; font-weight: 800; margin-bottom: 8px }
+    .modal p  { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 22px }
+    .modal-actions { display: flex; gap: 10px }
+    .btn-confirm {
+      flex: 1; padding: 14px; border: none; border-radius: 12px;
+      background: var(--accent); color: #1a0f00;
+      font-size: 15px; font-weight: 800; cursor: pointer;
+    }
+    .btn-cancel {
+      flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 12px;
+      background: transparent; color: var(--muted);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .btn-confirm:active { opacity: 0.8 }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3); border-top-color: #1a0f00;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>Pick a video</h1>
+    <div class="sub">You're in control — choose what plays next.</div>
+  </div>
+</header>
+
+<div class="grid" id="grid">
+  {% if titles %}
+    {% for t in titles %}
+    <div class="card" data-key="{{ t.key }}" data-title="{{ t.title }}">
+      <img src="{{ url_for('poster', rel=t.poster) }}" alt="{{ t.title }}" loading="lazy">
+      <div class="card-title">{{ t.title }}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">No videos available yet.</div>
+  {% endif %}
+</div>
+
+<!-- Confirm modal -->
+<div id="overlay">
+  <div class="modal">
+    <h2 id="modal-title">Confirm</h2>
+    <p>You'll be in control and can stop the video at any time.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btn-cancel">Cancel</button>
+      <button class="btn-confirm" id="btn-confirm">Play it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let pendingKey = null;
+
+document.getElementById('grid').addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  pendingKey = card.dataset.key;
+  document.getElementById('modal-title').textContent = card.dataset.title;
+  document.getElementById('overlay').classList.add('open');
+});
+
+document.getElementById('btn-cancel').onclick = () => {
+  document.getElementById('overlay').classList.remove('open');
+  pendingKey = null;
+};
+
+document.getElementById('btn-confirm').onclick = async () => {
+  if (!pendingKey) return;
+  const btn = document.getElementById('btn-confirm');
+  btn.innerHTML = '<span class="spinner"></span>Starting…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/play', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: pendingKey }),
+    });
+    if (res.status === 200) {
+      setTimeout(() => location.href = '/', 300);
+    } else if (res.status === 409) {
+      alert('Something else just started. Try again.');
+      location.reload();
+    } else if (res.status === 403) {
+      alert('Your session expired. Reload and enter the PIN again.');
+      location.href = '/';
+    } else {
+      alert('Something went wrong. Try again.');
+      location.reload();
+    }
+  } catch {
+    alert('Network error. Try again.');
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Python
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Data
+data/
+media/
+
+# Secrets
+config.env
+
+# Chromium kiosk profile
+.config/chromium-kiosk/

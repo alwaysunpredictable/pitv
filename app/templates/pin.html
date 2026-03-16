@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% if admin_mode %}Admin{% else %}Enter PIN{% endif %}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    :root {
+      --bg: #0B0B10; --card: #16161E; --border: #24243A;
+      --accent: #C9973A; --fg: #F0F2FF; --muted: #6A6A8A;
+      --danger: #E05252;
+    }
+    html, body {
+      min-height: 100dvh; background: var(--bg); color: var(--fg);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      display: grid; place-items: center; padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { width: 100%; max-width: 440px }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px 24px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .eyebrow {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 10px;
+    }
+    h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px }
+    .lead { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 22px }
+    .field { position: relative }
+    input[type=text], input[type=password] {
+      width: 100%; padding: 16px; font-size: 24px; text-align: center;
+      letter-spacing: 0.25em; font-weight: 800;
+      background: #0F0F16; color: var(--fg);
+      border: 2px solid var(--border); border-radius: 14px; outline: none;
+      font-variant-numeric: tabular-nums;
+      transition: border-color 0.2s;
+    }
+    input[type=password] {
+      font-size: 16px; letter-spacing: 0.05em; font-weight: 400; text-align: left;
+    }
+    input:focus { border-color: var(--accent) }
+    .btn {
+      width: 100%; margin-top: 14px; padding: 15px;
+      border: none; border-radius: 14px;
+      background: var(--accent); color: #1a0f00;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:active { opacity: 0.8 }
+    .error {
+      margin-top: 14px; padding: 12px 14px;
+      background: rgba(224,82,82,0.1); border: 1px solid rgba(224,82,82,0.3);
+      border-radius: 10px; color: var(--danger); font-size: 14px; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="eyebrow">{% if admin_mode %}Restricted{% else %}Waiting Room{% endif %}</div>
+    <h1>{% if admin_mode %}Admin login{% else %}Enter PIN{% endif %}</h1>
+    <p class="lead">
+      {% if admin_mode %}
+        Enter the admin password to manage playback.
+      {% else %}
+        Enter the 4-digit PIN shown on the TV to pick what plays next.
+      {% endif %}
+    </p>
+
+    <form method="post"
+          action="{{ url_for('admin') if admin_mode else url_for('post_pin') }}"
+          {% if not admin_mode %}onsubmit="clean()"{% endif %}>
+      {% if admin_mode %}
+        <input type="password" name="password" placeholder="Password" autofocus>
+      {% else %}
+        <input type="text" name="pin" inputmode="numeric" pattern="[0-9]*"
+               maxlength="4" placeholder="••••"
+               autocomplete="one-time-code" autofocus>
+      {% endif %}
+      <button class="btn">Continue</button>
+    </form>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+  </div>
+</div>
+<script>
+function clean() {
+  const el = document.querySelector('input[name="pin"]');
+  if (el) el.value = (el.value || '').replace(/\D/g, '').trim();
+}
+</script>
+</body>
+</html>

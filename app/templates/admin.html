@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    :root {
+      --bg: #0B0B10; --card: #16161E; --border: #24243A;
+      --accent: #C9973A; --fg: #F0F2FF; --muted: #6A6A8A;
+      --danger: #E05252;
+    }
+    html, body {
+      min-height: 100dvh; background: var(--bg); color: var(--fg);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { max-width: 640px; margin: 0 auto; padding: 24px 16px 60px }
+    .eyebrow {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 6px;
+    }
+    h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px }
+    .url-line { font-size: 13px; color: var(--muted); margin-bottom: 28px }
+    .section { margin-bottom: 28px }
+    .section-title {
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700; margin-bottom: 12px;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .stat-label { font-size: 14px; color: var(--muted) }
+    .stat-value { font-size: 16px; font-weight: 700 }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .badge-idle    { background: rgba(106,106,138,0.2); color: var(--muted) }
+    .badge-picking { background: rgba(201,151,58,0.2);  color: var(--accent) }
+    .badge-playing { background: rgba(60,185,122,0.2);  color: #3CB97A }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px }
+    button, .btn {
+      padding: 12px 18px; border-radius: 12px; font-size: 14px;
+      font-weight: 700; cursor: pointer; border: none;
+    }
+    .btn-reset  { background: var(--danger); color: #fff }
+    .btn-reboot { background: rgba(201,151,58,0.15); color: var(--accent); border: 1px solid rgba(201,151,58,0.3) }
+    .btn-logout { background: transparent; color: var(--muted); border: 1px solid var(--border) }
+    button:active { opacity: 0.8 }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 12px }
+    select {
+      flex: 1; padding: 11px 12px; background: #0F0F16; color: var(--fg);
+      border: 1px solid var(--border); border-radius: 10px; font-size: 14px;
+    }
+    .play-row { display: flex; gap: 10px; align-items: center }
+    .btn-play { background: var(--accent); color: #1a0f00; white-space: nowrap }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="eyebrow">Waiting Room</div>
+  <h1>Admin</h1>
+  <div class="url-line">{{ url }}</div>
+
+  <div class="section">
+    <div class="section-title">Current state</div>
+    <div class="stat-card">
+      <span class="stat-label">Mode</span>
+      <span class="badge badge-{{ state.mode }}">{{ state.mode }}</span>
+    </div>
+    <hr class="divider">
+    <div class="stat-card">
+      <span class="stat-label">PIN</span>
+      <span class="stat-value" style="letter-spacing:0.15em">{{ state.pin }}</span>
+    </div>
+    {% if state.now_title %}
+    <hr class="divider">
+    <div class="stat-card">
+      <span class="stat-label">Playing</span>
+      <span class="stat-value">{{ state.now_title }}</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Controls</div>
+    <div class="actions">
+      <form method="post" action="{{ url_for('admin_action') }}"
+            onsubmit="return confirm('Force-stop and reset everything?')">
+        <button class="btn btn-reset" name="action" value="reset">Force Reset</button>
+      </form>
+      <form method="post" action="{{ url_for('admin_action') }}"
+            onsubmit="return confirm('Reboot the device?')">
+        <button class="btn btn-reboot" name="action" value="reboot">Reboot</button>
+      </form>
+    </div>
+  </div>
+
+  {% if titles %}
+  <div class="section">
+    <div class="section-title">Play a video</div>
+    <form method="post" action="{{ url_for('admin_action') }}">
+      <div class="play-row">
+        <select name="key">
+          {% for t in titles %}
+            <option value="{{ t.key }}">{{ t.title }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-play" name="action" value="play">Play</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <form action="{{ url_for('logout') }}">
+    <button class="btn btn-logout">Log out</button>
+  </form>
+</div>
+<script>setInterval(() => location.reload(), 10000)</script>
+</body>
+</html>

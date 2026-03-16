@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Now Showing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    :root {
+      --bg:      #0B0B10;
+      --card:    #16161E;
+      --border:  #24243A;
+      --accent:  #C9973A;
+      --accent2: #8B5CF6;
+      --fg:      #F0F2FF;
+      --muted:   #6A6A8A;
+      --dim:     rgba(201,151,58,0.12);
+    }
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Shared screen base ─── */
+    .screen {
+      position: absolute; inset: 0;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── IDLE screen ─── */
+    #screen-idle {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .idle-left {
+      flex: 1 1 52%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6vh 5vw 6vh 7vw;
+      border-right: 1px solid var(--border);
+    }
+    .idle-eyebrow {
+      font-size: clamp(13px, 1.4vw, 20px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 2.5vh;
+    }
+    .idle-headline {
+      font-size: clamp(36px, 5vw, 80px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--fg);
+      margin-bottom: 4vh;
+    }
+    .idle-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2.2vh;
+    }
+    .idle-steps li {
+      display: flex;
+      align-items: center;
+      gap: 1.4vw;
+      font-size: clamp(16px, 1.8vw, 28px);
+      color: var(--fg);
+      opacity: 0.88;
+    }
+    .step-num {
+      flex: 0 0 auto;
+      width: clamp(28px, 3vw, 46px);
+      height: clamp(28px, 3vw, 46px);
+      border-radius: 50%;
+      background: var(--dim);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: clamp(13px, 1.4vw, 22px);
+    }
+
+    /* ── IDLE right panel ─── */
+    .idle-right {
+      flex: 0 0 48%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4vh 4vw;
+      gap: 3.5vh;
+    }
+    .qr-frame {
+      border: 3px solid var(--border);
+      border-radius: 18px;
+      background: #F0F2FF;
+      padding: 16px;
+      box-shadow: 0 0 60px rgba(201,151,58,0.08);
+    }
+    .qr-frame img {
+      display: block;
+      width: min(32vh, 30vw);
+      height: min(32vh, 30vw);
+      border-radius: 4px;
+    }
+    .pin-block {
+      text-align: center;
+    }
+    .pin-label {
+      font-size: clamp(12px, 1.2vw, 18px);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 1vh;
+    }
+    .pin-digits {
+      font-size: clamp(60px, 11vw, 160px);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      transition: opacity 0.3s;
+    }
+    .pin-digits.flash {
+      opacity: 0.2;
+    }
+    .url-hint {
+      font-size: clamp(11px, 1.1vw, 16px);
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── PICKING screen ─── */
+    #screen-picking {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 3vh;
+    }
+    .status-eyebrow {
+      font-size: clamp(13px, 1.4vw, 20px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .status-headline {
+      font-size: clamp(36px, 6vw, 90px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--fg);
+      line-height: 1.1;
+    }
+    .status-sub {
+      font-size: clamp(16px, 1.8vw, 28px);
+      color: var(--muted);
+      text-align: center;
+    }
+    .dots {
+      display: flex; gap: 12px;
+    }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.3;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s }
+    .dot:nth-child(3) { animation-delay: 0.4s }
+    @keyframes pulse {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(1) }
+      40%           { opacity: 1;   transform: scale(1.3) }
+    }
+
+    /* ── PLAYING screen ─── */
+    #screen-playing {
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2.5vh;
+    }
+    .now-playing-label {
+      font-size: clamp(13px, 1.4vw, 20px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .now-playing-title {
+      font-size: clamp(28px, 4.5vw, 72px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--fg);
+      max-width: 80vw;
+      line-height: 1.15;
+    }
+
+    /* ── Scan badge (bottom right, idle only) ─── */
+    .scan-badge {
+      position: absolute;
+      bottom: 3vh;
+      right: 3vw;
+      font-size: clamp(11px, 1vw, 15px);
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- IDLE -->
+  <div class="screen" id="screen-idle">
+    <div class="idle-left">
+      <div class="idle-eyebrow">Waiting Room</div>
+      <h1 class="idle-headline">Pick what's<br>on screen.</h1>
+      <ol class="idle-steps">
+        <li><span class="step-num">1</span>Scan the QR code with your phone</li>
+        <li><span class="step-num">2</span>Enter the PIN shown on this screen</li>
+        <li><span class="step-num">3</span>Choose a video from the list</li>
+      </ol>
+    </div>
+    <div class="idle-right">
+      <div class="qr-frame">
+        <img id="qr-img" src="/qr.png" alt="QR code">
+      </div>
+      <div class="pin-block">
+        <div class="pin-label">PIN</div>
+        <div class="pin-digits" id="pin-display">----</div>
+      </div>
+      <div class="url-hint" id="url-hint"></div>
+    </div>
+  </div>
+
+  <!-- PICKING -->
+  <div class="screen" id="screen-picking">
+    <div class="status-eyebrow">Stand by</div>
+    <div class="status-headline">Someone is<br>choosing now…</div>
+    <div class="status-sub">A video will start shortly</div>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- PLAYING -->
+  <div class="screen" id="screen-playing">
+    <div class="now-playing-label">Now Playing</div>
+    <div class="now-playing-title" id="playing-title"></div>
+  </div>
+
+<script>
+  let _mode = null;
+  let _pin  = null;
+  let _qrUrl = null;
+
+  const screens = {
+    idle:    document.getElementById("screen-idle"),
+    picking: document.getElementById("screen-picking"),
+    playing: document.getElementById("screen-playing"),
+  };
+  const pinEl    = document.getElementById("pin-display");
+  const titleEl  = document.getElementById("playing-title");
+  const urlHint  = document.getElementById("url-hint");
+  const qrImg    = document.getElementById("qr-img");
+
+  function show(name) {
+    if (_mode === name) return;
+    _mode = name;
+    for (const [k, el] of Object.entries(screens)) {
+      el.classList.toggle("active", k === name);
+    }
+  }
+
+  function updatePin(pin) {
+    if (pin === _pin) return;
+    _pin = pin;
+    pinEl.classList.add("flash");
+    setTimeout(() => {
+      pinEl.textContent = pin;
+      pinEl.classList.remove("flash");
+    }, 300);
+  }
+
+  async function poll() {
+    try {
+      const r  = await fetch("/api/state");
+      const st = await r.json();
+
+      if (st.qr_url && st.qr_url !== _qrUrl) {
+        _qrUrl = st.qr_url;
+        qrImg.src = "/qr.png?" + Date.now();
+        urlHint.textContent = st.qr_url.replace(/^https?:\/\//, "");
+      }
+
+      if (st.mode === "idle") {
+        updatePin(st.pin);
+        show("idle");
+      } else if (st.mode === "picking") {
+        show("picking");
+      } else if (st.mode === "playing") {
+        titleEl.textContent = st.now_title || "";
+        show("playing");
+      }
+    } catch (e) {
+      // network blip — stay on current screen
+    }
+  }
+
+  // Initial render then poll every 2s
+  poll();
+  setInterval(poll, 2000);
+</script>
+</body>
+</html>
