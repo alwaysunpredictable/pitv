@@ -48,6 +48,11 @@ waiting-room/
 └── download_sample.sh      Downloads Big Buck Bunny as a sample/demo video
 ```
 
+## Requirements
+
+> **Tested on Raspberry Pi 5 running Raspberry Pi OS Bookworm (Debian 12).**  
+> **Other Pi models and OS versions may work but are untested.**
+
 ## Fresh Pi setup
 
 ```bash
