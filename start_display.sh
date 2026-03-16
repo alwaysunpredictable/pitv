@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Launched by labwc autostart — runs in Wayland session
 
-# Give the session and services time to settle
-sleep 10
+# Wait until gunicorn is actually ready (no fixed sleep)
+until curl -s http://127.0.0.1:9000 > /dev/null 2>&1; do
+  sleep 1
+done
 
 # Disable screen blanking / power saving (best-effort)
 command -v xset >/dev/null 2>&1 && xset s off -dpms 2>/dev/null || true
