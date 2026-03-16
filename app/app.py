@@ -329,8 +329,13 @@ def admin_action():
     action = request.form.get("action")
 
     if action == "reset":
-        kset("stop_requested", "1")
-        reset_to_idle()
+        st = get_state()
+        if st["mode"] == "playing":
+            # Let player.py kill mpv and reset — do not call reset_to_idle() here
+            # or it will clear stop_requested before player.py sees it
+            kset("stop_requested", "1")
+        else:
+            reset_to_idle()
         session.pop("token", None)
         return redirect(url_for("admin"))
 
