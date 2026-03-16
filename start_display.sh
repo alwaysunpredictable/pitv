@@ -30,4 +30,4 @@ exec chromium-browser \
   --password-store=basic \
   --disable-features=TranslateUI \
   --user-data-dir="$PROFILE" \
-  "http://localhost:9000/tv"
+  "http://127.0.0.1:9000/tv"
