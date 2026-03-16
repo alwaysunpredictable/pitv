@@ -344,12 +344,16 @@ def admin_action():
         match = next((t for t in list_titles() if t["key"] == key), None) if key else None
         if match:
             token = secrets.token_hex(24)
-            kset_many({
+            st    = get_state()
+            pairs = {
                 "mode":             "playing",
                 "controller_token": token,
                 "now_title":        match["title"],
                 "now_poster":       match["poster"],
-            })
+            }
+            if st["mode"] == "playing":
+                pairs["stop_requested"] = "1"
+            kset_many(pairs)
             REQUEST_FILE.write_text(json.dumps({
                 "path":  str((MEDIA / match["video"]).resolve()),
                 "title": match["title"],

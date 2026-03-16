@@ -212,7 +212,11 @@ def main():
         # Video finished
         if mpv_proc and mpv_proc.poll() is not None:
             logging.info("Playback ended (exit code %s)", mpv_proc.returncode)
-            reset_to_idle()
+            if REQUEST_FILE.exists():
+                # Admin queued a new video — clear stop flag and let it play
+                kset_many({"stop_requested": "0"})
+            else:
+                reset_to_idle()
             mpv_proc = None
 
         time.sleep(0.25)
