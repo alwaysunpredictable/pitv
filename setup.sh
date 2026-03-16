@@ -99,6 +99,7 @@ User=$APP_USER
 Group=$APP_USER
 EnvironmentFile=$BASE/config.env
 WorkingDirectory=$BASE/app
+ExecStartPre=/bin/rm -f $BASE/app/gunicorn.ctl
 ExecStart=$BASE/env/bin/gunicorn -w 1 --threads 4 -b 0.0.0.0:9000 app:APP
 Restart=always
 RestartSec=3
