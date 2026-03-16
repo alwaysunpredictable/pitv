@@ -34,7 +34,8 @@ waiting-room/
 ├── config.env              Secrets — edit before first run
 ├── requirements.txt        Python dependencies
 ├── start_display.sh        Launches Chromium kiosk (run by labwc autostart)
-└── setup.sh                Full install script for a fresh Pi
+├── setup.sh                Full install script for a fresh Pi
+└── download_sample.sh      Downloads Big Buck Bunny as a sample/demo video
 ```
 
 ## Fresh Pi setup
