@@ -11,6 +11,7 @@ warn() { echo -e "${YLW}!${NC} $*"; }
 die()  { echo -e "${RED}✗${NC} $*"; exit 1; }
 
 [ "$(id -u)" = "0" ] || die "Run as root: sudo bash setup.sh"
+# ── Change this if you want a different username ──────────────────────────────
 APP_USER="pitv"
 
 echo ""
