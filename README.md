@@ -63,9 +63,9 @@ Each video needs its own subfolder under `media/`:
 
 ```
 media/
-└── Moana/
-    ├── Moana.mp4
-    └── Moana.png      (poster image, portrait 2:3 ratio works best)
+└── Big Buck Bunny/
+    ├── Big Buck Bunny.mp4
+    └── Big Buck Bunny.png  (poster image, portrait 2:3 ratio works best)
 ```
 
 Supported video formats: `.mp4`, `.mkv`, `.mov`, `.avi`
