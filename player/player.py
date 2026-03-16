@@ -190,6 +190,9 @@ def main():
             _set_audio_defaults()
             display_env = _get_display_env()
 
+            # Clear any stop flag before starting (admin override leaves it set)
+            kset_many({"stop_requested": "0"})
+
             try:
                 mpv_proc = subprocess.Popen(
                     [
@@ -212,10 +215,7 @@ def main():
         # Video finished
         if mpv_proc and mpv_proc.poll() is not None:
             logging.info("Playback ended (exit code %s)", mpv_proc.returncode)
-            if REQUEST_FILE.exists():
-                # Admin queued a new video — clear stop flag and let it play
-                kset_many({"stop_requested": "0"})
-            else:
+            if not REQUEST_FILE.exists():
                 reset_to_idle()
             mpv_proc = None
 
