@@ -174,6 +174,12 @@ def main():
 
         # Pick up a new play request
         if REQUEST_FILE.exists() and (mpv_proc is None or mpv_proc.poll() is not None):
+            # Discard stale request if DB says we are not playing (e.g. after reboot reset)
+            if kget("mode") != "playing":
+                REQUEST_FILE.unlink(missing_ok=True)
+                logging.info("Discarded stale request.json (mode is not playing)")
+                time.sleep(0.3)
+                continue
             try:
                 req = json.loads(REQUEST_FILE.read_text())
             except Exception:
