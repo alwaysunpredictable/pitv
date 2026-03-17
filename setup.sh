@@ -172,7 +172,7 @@ sleep 3
 
 # ── 12. Health check ──────────────────────────────────────────────────────────
 echo ""
-if curl -sf http://localhost:9000/api/state > /dev/null 2>&1; then
+if curl -sf http://127.0.0.1:9000/api/state > /dev/null 2>&1; then
   ok "Health check passed — app is running"
   echo ""
   echo "  Local URL: http://$(hostname -I | awk '{print $1}'):9000"
