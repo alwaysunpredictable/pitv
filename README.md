@@ -107,14 +107,20 @@ sudo reboot
 
 ## Adding videos
 
-Each video needs its own subfolder under `media/`:
+Each video needs its own subfolder under `media/`, containing one video file and one poster image:
 
 ```
 media/
-└── Big Buck Bunny/
-    ├── Big Buck Bunny.mp4
-    └── Big Buck Bunny.png  (poster image, portrait 2:3 ratio works best)
+├── Big Buck Bunny/
+│   ├── Big Buck Bunny.mp4
+│   └── Big Buck Bunny.png
+└── My Other Video/
+    ├── My Other Video.mp4
+    └── My Other Video.jpg
 ```
+
+The poster image is required — videos without one won't appear in the picker.
+Portrait ratio (2:3) works best for the poster.
 
 Supported video formats: `.mp4`, `.mkv`, `.mov`, `.avi`
 Supported poster formats: `.webp`, `.png`, `.jpg`, `.jpeg`
