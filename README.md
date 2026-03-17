@@ -119,6 +119,12 @@ media/
 Supported video formats: `.mp4`, `.mkv`, `.mov`, `.avi`
 Supported poster formats: `.webp`, `.png`, `.jpg`, `.jpeg`
 
+To get started quickly, run the included sample downloader — it fetches Big Buck Bunny (~62MB) and generates a poster for it:
+
+```bash
+bash download_sample.sh
+```
+
 ## Config
 
 Edit `/home/pitv/waiting-room/config.env`:
