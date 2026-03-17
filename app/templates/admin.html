@@ -75,20 +75,20 @@
     <div class="section-title">Current state</div>
     <div class="stat-card">
       <span class="stat-label">Mode</span>
-      <span class="badge badge-{{ state.mode }}">{{ state.mode }}</span>
+      <span class="badge" id="stat-mode">{{ state.mode }}</span>
     </div>
     <hr class="divider">
     <div class="stat-card">
       <span class="stat-label">PIN</span>
-      <span class="stat-value" style="letter-spacing:0.15em">{{ state.pin }}</span>
+      <span class="stat-value" style="letter-spacing:0.15em" id="stat-pin">{{ state.pin }}</span>
     </div>
-    {% if state.now_title %}
-    <hr class="divider">
-    <div class="stat-card">
-      <span class="stat-label">Playing</span>
-      <span class="stat-value">{{ state.now_title }}</span>
+    <div id="stat-playing-row" {% if not state.now_title %}style="display:none"{% endif %}>
+      <hr class="divider">
+      <div class="stat-card">
+        <span class="stat-label">Playing</span>
+        <span class="stat-value" id="stat-title">{{ state.now_title }}</span>
+      </div>
     </div>
-    {% endif %}
   </div>
 
   <div class="section">
@@ -144,6 +144,20 @@
     <button class="btn btn-logout">Log out</button>
   </form>
 </div>
-<script>setInterval(() => location.reload(), 10000)</script>
+<script>
+async function refreshState() {
+  try {
+    const r  = await fetch('/api/state');
+    const st = await r.json();
+    const modeEl = document.getElementById('stat-mode');
+    modeEl.textContent = st.mode;
+    modeEl.className = 'badge badge-' + st.mode;
+    document.getElementById('stat-pin').textContent   = st.pin;
+    document.getElementById('stat-title').textContent = st.now_title;
+    document.getElementById('stat-playing-row').style.display = st.now_title ? '' : 'none';
+  } catch {}
+}
+setInterval(refreshState, 5000);
+</script>
 </body>
 </html>
