@@ -118,6 +118,17 @@
 </div>
 
 <script>
+// Redirect if admin resets while on this page
+async function pollState() {
+  try {
+    const r  = await fetch('/api/state');
+    const st = await r.json();
+    if (st.mode !== 'picking') location.href = '/';
+  } catch {}
+  setTimeout(pollState, 3000);
+}
+setTimeout(pollState, 3000);
+
 let pendingKey = null;
 
 document.getElementById('grid').addEventListener('click', e => {
