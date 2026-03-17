@@ -12,14 +12,14 @@
 
 A Raspberry Pi kiosk that lets people in a waiting room pick what plays on the TV.
 The TV displays a QR code and PIN. Guests scan with their phone, enter the PIN, and
-choose a video. The person who enters the PIN is in control and can stop the video.
-Others who scan while something is playing see a waiting screen.
+choose a video. Once a video starts it plays to the end — no stopping it.
+Others who scan while something is playing see a now-playing screen with the poster art.
 
 ## How it works
 
-- **TV display** — Chromium kiosk opens `http://localhost:9000/tv`, shows QR + PIN
-- **Phone UI** — Guest scans QR → enters PIN → picks video or waits
-- **Controller** — First person to enter the PIN can pick and stop the video
+- **TV display** — Chromium kiosk shows QR code + PIN while idle, title while playing
+- **Phone UI** — Guest scans QR → enters PIN → picks a video
+- **Choose wisely** — Once a video starts it plays to the end. Only admin can interrupt it.
 - **Player** — `mpv` plays the video fullscreen over Chromium
 - **PIN rotation** — PIN changes after every video so each round is fresh
 
@@ -32,9 +32,8 @@ waiting-room/
 │   └── templates/
 │       ├── tv.html         TV kiosk display (polls /api/state every 2s)
 │       ├── pin.html        PIN entry page
-│       ├── pick.html       Video picker grid (controller only)
-│       ├── control.html    Now playing + Stop button (controller only)
-│       ├── wait.html       Waiting screen (non-controllers)
+│       ├── pick.html       Video picker grid (first to enter PIN)
+│       ├── wait.html       Now playing screen (shown to all while video runs)
 │       └── admin.html      Admin panel (/admin)
 ├── player/
 │   └── player.py           mpv daemon — watches for play requests, handles stop
