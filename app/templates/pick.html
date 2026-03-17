@@ -88,7 +88,7 @@
 <header>
   <div class="header-inner">
     <h1>Pick a video</h1>
-    <div class="sub">Choose wisely — once it starts, it plays to the end.</div>
+    <div class="sub">{% if free_play %}Pick anything — you can stop it any time.{% else %}Choose wisely — once it starts, it plays to the end.{% endif %}</div>
   </div>
 </header>
 
@@ -109,7 +109,7 @@
 <div id="overlay">
   <div class="modal">
     <h2 id="modal-title">Confirm</h2>
-    <p>No stopping it once it starts — choose wisely.</p>
+    <p>{% if free_play %}You can stop it any time.{% else %}No stopping it once it starts — choose wisely.{% endif %}</p>
     <div class="modal-actions">
       <button class="btn-cancel" id="btn-cancel">Cancel</button>
       <button class="btn-confirm" id="btn-confirm">Play it</button>
