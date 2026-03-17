@@ -133,6 +133,7 @@ def reset_to_idle():
 def main():
     DATA.mkdir(parents=True, exist_ok=True)
     logging.info("Player daemon started")
+    reset_to_idle()
     _set_audio_defaults()
 
     mpv_proc    = None
