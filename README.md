@@ -67,13 +67,11 @@ waiting-room/
 
 ## Requirements
 
+> **Raspberry Pi OS (Full) is required — Lite is missing the desktop environment that this project depends on.**  
 > **Tested on Raspberry Pi 5 running Raspberry Pi OS Bookworm (Debian 12).**  
 > **Other Pi models and OS versions may work but are untested.**
 
 ## Fresh Pi setup
-
-> **Before running setup, make sure your Pi is fully up to date.** Running setup
-> on a Pi mid-update can cause packages like mpv to silently fail to install.
 
 ```bash
 # 1. Update the system first (do this once after a fresh flash)
