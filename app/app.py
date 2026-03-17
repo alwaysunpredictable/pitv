@@ -143,7 +143,6 @@ def reset_to_idle():
 def _boot_reset():
     try:
         _ensure_init()
-        reset_to_idle()
     except Exception:
         pass
 

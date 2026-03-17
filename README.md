@@ -15,6 +15,10 @@ The TV displays a QR code and PIN. Guests scan with their phone, enter the PIN, 
 choose a video. Once a video starts it plays to the end — no stopping it.
 Others who scan while something is playing see a now-playing screen with the poster art.
 
+## Network requirement
+
+> **Phones must be on the same Wi-Fi network as the Pi.** The app runs locally — there is no internet access or remote connectivity.
+
 ## How it works
 
 - **TV display** — Chromium kiosk shows QR code + PIN while idle, title while playing
@@ -22,6 +26,19 @@ Others who scan while something is playing see a now-playing screen with the pos
 - **Choose wisely** — Once a video starts it plays to the end. Only admin can interrupt it.
 - **Player** — `mpv` plays the video fullscreen over Chromium
 - **PIN rotation** — PIN changes after every video so each round is fresh
+
+## Free Play mode
+
+Toggle **Free Play** on from the admin panel for a no-PIN experience — great for personal use or kids.
+
+| | Normal mode | Free Play mode |
+|---|---|---|
+| Access | Scan QR + enter PIN | Scan QR — no PIN |
+| Who picks | First to enter PIN | Anyone |
+| Stop video | Nobody (plays to end) | Anyone |
+| Admin override | Always available | Always available |
+
+Free Play can be toggled on/off at any time from `/admin` without rebooting.
 
 ## Project layout
 
@@ -33,7 +50,8 @@ waiting-room/
 │       ├── tv.html         TV kiosk display (polls /api/state every 2s)
 │       ├── pin.html        PIN entry page
 │       ├── pick.html       Video picker grid (first to enter PIN)
-│       ├── wait.html       Now playing screen (shown to all while video runs)
+│       ├── control.html    Now playing + Stop button (free play mode only)
+│       ├── wait.html       Now playing screen (normal mode, no stop button)
 │       └── admin.html      Admin panel (/admin)
 ├── player/
 │   └── player.py           mpv daemon — watches for play requests, handles stop

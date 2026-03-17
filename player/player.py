@@ -133,6 +133,7 @@ def reset_to_idle():
 def main():
     DATA.mkdir(parents=True, exist_ok=True)
     logging.info("Player daemon started")
+    time.sleep(3)   # let app.py finish initializing the DB first
     reset_to_idle()
     _set_audio_defaults()
 
