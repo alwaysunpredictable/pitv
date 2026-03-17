@@ -73,6 +73,8 @@ waiting-room/
 
 ## Fresh Pi setup
 
+> **Username:** When flashing the Pi, set the username to `pitv`. If you use a different username, edit the `APP_USER` variable at the top of `setup.sh` before running it.
+
 ```bash
 # 1. Update the system first (do this once after a fresh flash)
 sudo apt update && sudo apt full-upgrade -y
@@ -82,10 +84,14 @@ sudo reboot
 After it reboots:
 
 ```bash
-# 2. Clone and install
+# 2. Clone, configure, and install
 git clone https://github.com/alwaysunpredictable/pitv.git waiting-room
 cd waiting-room
-nano config.env          # set ADMIN_PASS, APP_SECRET is auto-generated
+```
+
+Edit `config.env` before running setup — see [Config](#config) below for details.
+
+```bash
 sudo bash setup.sh
 sudo reboot
 ```
