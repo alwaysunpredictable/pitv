@@ -118,12 +118,18 @@
 </div>
 
 <script>
-// Redirect if admin resets while on this page
+const _freePlay = {{ 'true' if free_play else 'false' }};
+
 async function pollState() {
   try {
     const r  = await fetch('/api/state');
     const st = await r.json();
-    if (st.mode !== 'picking') location.href = '/';
+    // Always leave if a video started
+    if (st.mode === 'playing') { location.href = '/'; return; }
+    // In normal mode, leave if admin reset (mode back to idle)
+    if (!_freePlay && st.mode === 'idle') { location.href = '/'; return; }
+    // Leave if free play was toggled off
+    if (_freePlay && st.free_play !== '1') { location.href = '/'; return; }
   } catch {}
   setTimeout(pollState, 3000);
 }

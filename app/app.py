@@ -219,19 +219,19 @@ def home():
 
     if free_play:
         if mode in ("idle", "picking"):
-            return render_template("pick.html", titles=list_titles())
+            return render_template("pick.html", titles=list_titles(), free_play=True)
         if mode == "playing":
             return render_template("control.html", title=st["now_title"],
                                    poster_rel=st["now_poster"], free_play=True)
 
     if mode == "idle":
         if ctrl:
-            return render_template("pick.html", titles=list_titles())
+            return render_template("pick.html", titles=list_titles(), free_play=False)
         return render_template("pin.html")
 
     if mode == "picking":
         if ctrl:
-            return render_template("pick.html", titles=list_titles())
+            return render_template("pick.html", titles=list_titles(), free_play=False)
         return render_template("wait.html", mode="picking", title="")
 
     if mode == "playing":
