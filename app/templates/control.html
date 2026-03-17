@@ -71,9 +71,9 @@
     </div>
     {% endif %}
     <div class="body">
-      <div class="eyebrow">You're in control</div>
+      <div class="eyebrow">{% if free_play %}Free Play{% else %}Now Playing{% endif %}</div>
       {% if not poster_rel %}<div style="font-size:20px;font-weight:800;margin-bottom:8px">{{ title }}</div>{% endif %}
-      <p class="msg">Sit back and enjoy. You can stop the video at any time — no one else can.</p>
+      <p class="msg">{% if free_play %}Anyone can stop this video.{% else %}Sit back and enjoy. You can stop the video at any time.{% endif %}</p>
       <button class="btn-stop" id="stop-btn" onclick="stopVideo()">Stop Video</button>
       <div class="status-msg" id="status"></div>
     </div>
@@ -101,13 +101,14 @@ async function stopVideo() {
   }
 }
 
-// Passive background check — catches admin reset or natural video end
+// Passive background check — catches admin reset, natural video end, or free_play toggle
 setInterval(async () => {
   if (stopping) return;
   try {
     const r  = await fetch("/api/state");
     const st = await r.json();
     if (st.mode !== "playing") location.href = "/";
+    if (st.free_play !== "{{ '1' if free_play else '0' }}") location.href = "/";
   } catch {}
 }, 2000);
 

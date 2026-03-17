@@ -117,6 +117,7 @@ def get_state():
         "stop_requested":   kget("stop_requested", "0"),
         "now_title":        kget("now_title", ""),
         "now_poster":       kget("now_poster", ""),
+        "free_play":        kget("free_play", "0"),
     }
 
 def _new_pin():
@@ -189,9 +190,9 @@ def _is_controller(st=None):
 def require_controller(f):
     @wraps(f)
     def inner(*a, **kw):
-        if not _is_controller():
-            return redirect(url_for("home"))
-        return f(*a, **kw)
+        if kget("free_play") == "1" or _is_controller():
+            return f(*a, **kw)
+        return redirect(url_for("home"))
     return inner
 
 # ── QR ────────────────────────────────────────────────────────────────────────
@@ -212,9 +213,17 @@ def _init():
 
 @APP.get("/")
 def home():
-    st   = get_state()
-    mode = st["mode"]
-    ctrl = _is_controller(st)
+    st        = get_state()
+    mode      = st["mode"]
+    free_play = st["free_play"] == "1"
+    ctrl      = _is_controller(st)
+
+    if free_play:
+        if mode in ("idle", "picking"):
+            return render_template("pick.html", titles=list_titles())
+        if mode == "playing":
+            return render_template("control.html", title=st["now_title"],
+                                   poster_rel=st["now_poster"], free_play=True)
 
     if mode == "idle":
         if ctrl:
@@ -270,6 +279,13 @@ def api_play():
     logging.info("%s picked '%s'", _client_ip(), match["title"])
     return ("OK", 200)
 
+@APP.post("/api/stop")
+def api_stop():
+    if kget("free_play") != "1" and not _is_controller():
+        abort(403)
+    kset("stop_requested", "1")
+    return ("OK", 200)
+
 @APP.get("/api/state")
 def api_state():
     st  = get_state()
@@ -279,6 +295,7 @@ def api_state():
         "pin":        st["pin"],
         "now_title":  st["now_title"],
         "now_poster": st["now_poster"],
+        "free_play":  st["free_play"],
         "qr_url":     url,
     })
 
@@ -350,6 +367,10 @@ def admin_action():
                 "title": match["title"],
             }))
             logging.info("admin played '%s'", match["title"])
+        return redirect(url_for("admin"))
+
+    if action == "toggle_free_play":
+        kset("free_play", "0" if kget("free_play", "0") == "1" else "1")
         return redirect(url_for("admin"))
 
     if action == "reboot":

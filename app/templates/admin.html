@@ -51,6 +51,10 @@
     .btn-reset  { background: var(--danger); color: #fff }
     .btn-reboot { background: rgba(201,151,58,0.15); color: var(--accent); border: 1px solid rgba(201,151,58,0.3) }
     .btn-logout { background: transparent; color: var(--muted); border: 1px solid var(--border) }
+    .btn-freeplay-on  { background: #3CB97A; color: #fff }
+    .btn-freeplay-off { background: rgba(60,185,122,0.15); color: #3CB97A; border: 1px solid rgba(60,185,122,0.3) }
+    .freeplay-row { display: flex; align-items: center; gap: 14px }
+    .freeplay-status { font-size: 13px; color: var(--muted); line-height: 1.4 }
     button:active { opacity: 0.8 }
     .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 12px }
     select {
@@ -85,6 +89,25 @@
       <span class="stat-value">{{ state.now_title }}</span>
     </div>
     {% endif %}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Free Play</div>
+    <div class="freeplay-row">
+      <form method="post" action="{{ url_for('admin_action') }}">
+        <button class="btn {% if state.free_play == '1' %}btn-freeplay-on{% else %}btn-freeplay-off{% endif %}"
+                name="action" value="toggle_free_play">
+          Free Play {% if state.free_play == '1' %}ON{% else %}OFF{% endif %}
+        </button>
+      </form>
+      <span class="freeplay-status">
+        {% if state.free_play == '1' %}
+          No PIN needed — anyone can pick and stop videos.
+        {% else %}
+          PIN required — only first guest picks, videos play to the end.
+        {% endif %}
+      </span>
+    </div>
   </div>
 
   <div class="section">
