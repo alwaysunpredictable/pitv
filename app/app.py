@@ -227,7 +227,7 @@ def home():
         return render_template("wait.html", mode="picking", title="")
 
     if mode == "playing":
-        return render_template("wait.html", mode="playing", title=st["now_title"])
+        return render_template("wait.html", mode="playing", title=st["now_title"], poster_rel=st["now_poster"])
 
     return render_template("pin.html")
 
@@ -238,7 +238,7 @@ def post_pin():
 
     # Block if a video is already playing
     if mode == "playing":
-        return render_template("wait.html", mode=mode, title=st["now_title"])
+        return render_template("wait.html", mode=mode, title=st["now_title"], poster_rel=st["now_poster"])
 
     pin = (request.form.get("pin") or "").strip()
     if pin != st["pin"]:
@@ -270,21 +270,16 @@ def api_play():
     logging.info("%s picked '%s'", _client_ip(), match["title"])
     return ("OK", 200)
 
-@APP.post("/api/stop")
-@require_controller
-def api_stop():
-    kset("stop_requested", "1")
-    return ("OK", 200)
-
 @APP.get("/api/state")
 def api_state():
     st  = get_state()
     url = web_url()
     return jsonify({
-        "mode":      st["mode"],
-        "pin":       st["pin"],
-        "now_title": st["now_title"],
-        "qr_url":    url,
+        "mode":       st["mode"],
+        "pin":        st["pin"],
+        "now_title":  st["now_title"],
+        "now_poster": st["now_poster"],
+        "qr_url":     url,
     })
 
 @APP.get("/tv")

@@ -24,6 +24,11 @@
     }
     h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px }
     .sub { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 28px }
+    .poster {
+      width: 100%; max-width: 220px; aspect-ratio: 2/3; object-fit: cover;
+      border-radius: 14px; margin: 0 auto 18px;
+      display: block; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
     .dots { display: flex; gap: 10px; justify-content: center }
     .dot {
       width: 10px; height: 10px; border-radius: 50%;
@@ -46,7 +51,11 @@
     <h1>Someone is choosing</h1>
     <p class="sub">Another guest is picking a video. You'll be able to choose once they're done.</p>
   {% else %}
+    {% if poster_rel %}
+    <img class="poster" src="{{ url_for('poster', rel=poster_rel) }}" alt="{{ title }}">
+    {% else %}
     <div class="icon">🍿</div>
+    {% endif %}
     <div class="eyebrow">Now Playing</div>
     <h1>{% if title %}{{ title }}{% else %}Video in progress{% endif %}</h1>
     <p class="sub">Sit back and enjoy — the video plays to the end.</p>
