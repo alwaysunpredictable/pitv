@@ -227,10 +227,6 @@ def home():
         return render_template("wait.html", mode="picking", title="")
 
     if mode == "playing":
-        if ctrl:
-            return render_template("control.html",
-                                   title=st["now_title"],
-                                   poster_rel=st["now_poster"])
         return render_template("wait.html", mode="playing", title=st["now_title"])
 
     return render_template("pin.html")
