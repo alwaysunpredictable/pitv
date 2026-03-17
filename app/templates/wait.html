@@ -54,16 +54,21 @@
   <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
 </div>
 <script>
-// Auto-check if we can enter now
+const _initTitle = {{ (title or '')|tojson }};
+const _initMode  = {{ mode|tojson }};
+
 async function check() {
   try {
     const r  = await fetch('/api/state');
     const st = await r.json();
-    if (st.mode === 'idle') location.href = '/';
+    // Reload on any state change: idle, new video, or mode switch
+    if (st.mode === 'idle') { location.href = '/'; return; }
+    if (st.mode !== _initMode) { location.reload(); return; }
+    if (st.now_title !== _initTitle) { location.reload(); return; }
   } catch {}
-  setTimeout(check, 5000);
+  setTimeout(check, 3000);
 }
-setTimeout(check, 5000);
+setTimeout(check, 3000);
 </script>
 </body>
 </html>
