@@ -11,7 +11,7 @@
 # Waiting Room TV Kiosk
 
 A Raspberry Pi kiosk that lets people in a waiting room pick what plays on the TV.
-The TV displays a QR code and PIN. Guests scan with their phone, enter the PIN, and
+The TV displays a QR code and PIN.. Guests scan with their phone, enter the PIN, and
 choose a video. Once a video starts it plays to the end — no stopping it.
 Others who scan while something is playing see a now-playing screen with the poster art.
 
