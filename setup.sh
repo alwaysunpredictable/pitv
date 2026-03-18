@@ -152,6 +152,16 @@ mkdir -p "$LABWC_DIR"
 cat > "$LABWC_DIR/autostart" << EOF
 $BASE/start_display.sh &
 EOF
+
+cat > "$LABWC_DIR/environment" << 'EOF'
+XKB_DEFAULT_MODEL=pc105
+XKB_DEFAULT_LAYOUT=us
+XKB_DEFAULT_VARIANT=
+XKB_DEFAULT_OPTIONS=
+XCURSOR_THEME=blank-cursor
+XCURSOR_SIZE=1
+EOF
+
 chown -R "$APP_USER:$APP_USER" "$LABWC_DIR"
 ok "labwc autostart created"
 
