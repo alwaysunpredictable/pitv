@@ -19,231 +19,405 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0B0B10;
-      --bg2:       #13131C;
-      --border:    #22222E;
-      --amber:     #C9973A;
-      --amber-dim: #a07828;
-      --text:      #E8E4DC;
-      --muted:     #888;
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #21262d;
+      --border:    #30363d;
+      --border2:   #3d444d;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --heading:   #f0f6fc;
+      --amber:     #d29922;
+      --amber-bg:  rgba(210,153,34,.15);
+      --amber-border: rgba(210,153,34,.4);
+      --green:     #3fb950;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 17px;
-      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     a { color: var(--amber); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* ── Header ── */
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 3rem 1.5rem 2.5rem;
-      text-align: center;
-    }
-
-    .logo {
-      font-size: 2.8rem;
-      font-weight: 700;
-      letter-spacing: -1px;
-      color: var(--amber);
-    }
-
-    .tagline {
-      margin-top: .5rem;
-      font-size: 1.15rem;
-      color: var(--muted);
-    }
-
-    .header-actions {
-      margin-top: 1.8rem;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .65rem 1.4rem;
-      border-radius: 6px;
-      font-size: .95rem;
-      font-weight: 600;
-      transition: opacity .15s;
-    }
-    .btn:hover { opacity: .85; text-decoration: none; }
-
-    .btn-primary {
-      background: var(--amber);
-      color: #0B0B10;
-    }
-
-    .btn-secondary {
-      background: transparent;
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+      font-size: .85em;
+      background: var(--surface2);
       border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .1em .35em;
       color: var(--text);
     }
 
-    /* ── Main ── */
-    main {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 3rem 1.5rem 5rem;
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
     }
 
-    /* ── Preview image ── */
-    .preview {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      margin-bottom: 3rem;
-      display: block;
+    .topbar-icon {
+      opacity: .6;
+      flex-shrink: 0;
     }
 
-    /* ── Section headings ── */
-    h2 {
-      font-size: 1.3rem;
+    .topbar-path {
+      font-size: .9rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      flex-wrap: wrap;
+    }
+
+    .topbar-path .owner { color: var(--text); font-weight: 500; }
+    .topbar-path .sep   { color: var(--muted); }
+    .topbar-path .repo  { color: var(--heading); font-weight: 600; }
+
+    .topbar-badge {
+      font-size: .7rem;
+      font-weight: 500;
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: 2em;
+      padding: .1em .55em;
+      color: var(--muted);
+      margin-left: .25rem;
+    }
+
+    .topbar-actions {
+      margin-left: auto;
+      display: flex;
+      gap: .5rem;
+    }
+
+    .btn-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .3rem .75rem;
+      border-radius: 6px;
+      font-size: .8rem;
+      font-weight: 500;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: default;
+      transition: background .15s;
+    }
+
+    .btn-sm:hover { background: var(--border); text-decoration: none; }
+    .btn-sm.primary {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #0d1117;
       font-weight: 600;
-      color: var(--amber);
-      margin-bottom: 1rem;
+    }
+    .btn-sm.primary:hover { opacity: .88; background: var(--amber); }
+
+    /* ── Layout ── */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 296px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+
+    /* ── README card ── */
+    .readme {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .readme-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: .6rem 1rem;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .readme-body {
+      padding: 1.5rem 2rem 2rem;
+      background: var(--bg);
+    }
+
+    .readme-body h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--heading);
+      margin-bottom: .4rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .readme-body h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--heading);
+      margin: 1.8rem 0 .8rem;
       padding-bottom: .4rem;
       border-bottom: 1px solid var(--border);
     }
 
-    /* ── How it works ── */
-    .how {
+    .readme-body p {
+      color: var(--text);
+      margin-bottom: .9rem;
+      line-height: 1.65;
+    }
+
+    /* ── Preview image ── */
+    .hero-img {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border2);
+      display: block;
+      margin: 1.2rem 0 1.5rem;
+      background: var(--surface);
+    }
+
+    /* ── Steps ── */
+    .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.2rem;
-      margin-bottom: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: .75rem;
+      margin-bottom: 1.2rem;
     }
 
     .step {
-      background: var(--bg2);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.2rem 1.3rem;
+      border-radius: 6px;
+      padding: .9rem 1rem;
     }
 
     .step-num {
-      font-size: .75rem;
+      font-size: .7rem;
       font-weight: 700;
-      letter-spacing: .1em;
+      letter-spacing: .08em;
       color: var(--amber);
       text-transform: uppercase;
-      margin-bottom: .4rem;
+      margin-bottom: .35rem;
     }
 
     .step h3 {
-      font-size: 1rem;
+      font-size: .9rem;
       font-weight: 600;
-      margin-bottom: .35rem;
+      color: var(--heading);
+      margin-bottom: .3rem;
     }
 
     .step p {
-      font-size: .9rem;
+      font-size: .82rem;
       color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ── Feature list ── */
+    .feature-list {
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      gap: .6rem;
+      padding: .55rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
       line-height: 1.5;
     }
 
-    /* ── Features ── */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.2rem;
-      margin-bottom: 3rem;
+    .feature-list li:last-child { border-bottom: none; }
+
+    .feature-list .check {
+      color: var(--green);
+      flex-shrink: 0;
+      margin-top: 1px;
     }
 
-    .feature {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.2rem 1.3rem;
-    }
-
-    .feature h3 {
-      font-size: 1rem;
+    .feature-list strong {
+      color: var(--heading);
       font-weight: 600;
-      margin-bottom: .35rem;
-    }
-
-    .feature p {
-      font-size: .9rem;
-      color: var(--muted);
-      line-height: 1.5;
     }
 
     /* ── Screenshots ── */
     .shots {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: .75rem;
+      margin-bottom: 1rem;
     }
 
-    .shots img {
+    .shot-card {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .shot-card img {
       width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--border);
       display: block;
     }
 
     .shot-label {
+      padding: .4rem .6rem;
+      font-size: .75rem;
+      color: var(--muted);
       text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Install block ── */
+    .install-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .8rem 1rem;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+      font-size: .82rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .install-block .prompt { color: var(--muted); user-select: none; }
+    .install-block .cmd    { color: var(--green); }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .about-box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      background: var(--bg);
+    }
+
+    .about-box h3 {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--heading);
+      margin-bottom: .75rem;
+    }
+
+    .about-desc {
+      font-size: .875rem;
+      color: var(--text);
+      line-height: 1.55;
+      margin-bottom: .9rem;
+    }
+
+    .about-link {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .875rem;
+      color: var(--amber);
+      margin-bottom: .75rem;
+    }
+
+    .about-link svg { flex-shrink: 0; color: var(--muted); }
+
+    .about-meta {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
       font-size: .8rem;
       color: var(--muted);
-      margin-top: .4rem;
     }
 
-    /* ── Stack ── */
-    .stack-grid {
+    .meta-row svg { flex-shrink: 0; }
+
+    /* ── Topics ── */
+    .topics {
       display: flex;
       flex-wrap: wrap;
-      gap: .6rem;
-      margin-bottom: 3rem;
+      gap: .4rem;
+      margin-top: .9rem;
     }
 
-    .tag {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: .3rem .8rem;
-      font-size: .85rem;
+    .topic {
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-border);
+      border-radius: 2em;
+      padding: .18em .65em;
+      font-size: .75rem;
+      color: var(--amber);
+      font-weight: 500;
+    }
+
+    /* ── GitHub button ── */
+    .gh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 500;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
       color: var(--text);
+      transition: background .15s;
     }
 
-    /* ── CTA ── */
-    .cta {
-      text-align: center;
-      background: var(--bg2);
+    .gh-btn:hover { background: var(--border); text-decoration: none; }
+
+    /* ── License box ── */
+    .license-box {
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 2.5rem 2rem;
-    }
-
-    .cta h2 {
-      border: none;
-      font-size: 1.4rem;
-      margin-bottom: .6rem;
-    }
-
-    .cta p {
+      border-radius: 6px;
+      padding: .9rem 1rem;
+      background: var(--bg);
+      font-size: .82rem;
       color: var(--muted);
-      margin-bottom: 1.5rem;
-      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
     }
 
     /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 2rem 1.5rem;
-      font-size: .85rem;
+      padding: 2rem 1rem;
+      font-size: .8rem;
       color: var(--muted);
       border-top: 1px solid var(--border);
     }
@@ -251,131 +425,203 @@
 </head>
 <body>
 
-<header>
-  <div class="logo">pitv</div>
-  <div class="tagline">Waiting Room TV Kiosk — powered by Raspberry Pi</div>
-  <div class="header-actions">
-    <a class="btn btn-primary" href="https://github.com/alwaysunpredictable/pitv">
-      View on GitHub
+<!-- Top bar -->
+<div class="topbar">
+  <!-- GitHub mark -->
+  <svg class="topbar-icon" width="20" height="20" viewBox="0 0 16 16" fill="#e6edf3">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+  </svg>
+  <div class="topbar-path">
+    <span class="owner">alwaysunpredictable</span>
+    <span class="sep">/</span>
+    <span class="repo">pitv</span>
+    <span class="topbar-badge">Public</span>
+  </div>
+  <div class="topbar-actions">
+    <a class="btn-sm primary" href="https://github.com/alwaysunpredictable/pitv">View on GitHub</a>
+  </div>
+</div>
+
+<!-- Two-column layout -->
+<div class="layout">
+
+  <!-- ── Left: README ── -->
+  <div class="readme">
+    <div class="readme-header">
+      <!-- Book icon -->
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="opacity:.6">
+        <path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75V1.75Z"/>
+      </svg>
+      README.md
+    </div>
+    <div class="readme-body">
+
+      <h1>pitv — Waiting Room TV Kiosk</h1>
+
+      <img class="hero-img"
+           src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
+           alt="pitv TV screen showing QR code and PIN">
+
+      <p>
+        A Raspberry Pi application that turns a waiting room TV into an interactive kiosk.
+        Guests scan a QR code with their phone, enter a PIN, and pick a video to play on
+        the shared display — no app required, no internet needed.
+      </p>
+
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">Step 1</div>
+          <h3>Scan the QR Code</h3>
+          <p>The TV shows a QR code and 4-digit PIN while idle. Any phone camera works.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 2</div>
+          <h3>Enter the PIN</h3>
+          <p>First to enter the PIN becomes the controller for this round.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 3</div>
+          <h3>Pick a Video</h3>
+          <p>Browse the grid and choose. It plays on the big screen immediately.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">Step 4</div>
+          <h3>Watch Together</h3>
+          <p>Video plays to completion. A fresh PIN is issued for the next round.</p>
+        </div>
+      </div>
+
+      <h2>Features</h2>
+      <ul class="feature-list">
+        <li>
+          <span class="check">✓</span>
+          <span><strong>No app required</strong> — everything runs in the phone's browser</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span><strong>Choose wisely</strong> — videos play to the end, no one can stop someone else's pick</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span><strong>Free Play mode</strong> — skip the PIN, anyone can pick or stop; great for personal use</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span><strong>Admin panel</strong> — force-reset, override playback, reboot, toggle modes</span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span><strong>Easy content management</strong> — drop a video and poster image into a named folder under <code>media/</code></span>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <span><strong>Runs locally</strong> — no cloud, no subscriptions, no internet required</span>
+        </li>
+      </ul>
+
+      <h2>Screenshots</h2>
+      <div class="shots">
+        <div class="shot-card">
+          <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
+               alt="TV screen — QR code and PIN">
+          <div class="shot-label">TV — QR code &amp; PIN</div>
+        </div>
+        <div class="shot-card">
+          <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/pickavideo.png"
+               alt="Phone — video picker">
+          <div class="shot-label">Phone — video picker</div>
+        </div>
+        <div class="shot-card">
+          <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/nowplaying.png"
+               alt="Phone — now playing">
+          <div class="shot-label">Phone — now playing</div>
+        </div>
+        <div class="shot-card">
+          <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/Admin.png"
+               alt="Admin panel">
+          <div class="shot-label">Admin panel</div>
+        </div>
+      </div>
+
+      <h2>Installation</h2>
+      <p>Flash a Pi with Raspberry Pi OS Bookworm (set username to <code>pitv</code>), then:</p>
+      <div class="install-block">
+        <span class="prompt">$ </span><span class="cmd">git clone https://github.com/alwaysunpredictable/pitv.git waiting-room</span><br>
+        <span class="prompt">$ </span><span class="cmd">cd waiting-room</span><br>
+        <span class="prompt">$ </span><span class="cmd">cp config.env.example config.env  <span style="color:#8b949e"># set APP_SECRET and ADMIN_PASS</span></span><br>
+        <span class="prompt">$ </span><span class="cmd">sudo bash setup.sh && sudo reboot</span>
+      </div>
+      <p>The setup script handles packages, virtual environment, systemd services, and autologin. See the <a href="https://github.com/alwaysunpredictable/pitv#readme">full README</a> for details.</p>
+
+    </div>
+  </div>
+
+  <!-- ── Right: Sidebar ── -->
+  <div class="sidebar">
+
+    <div class="about-box">
+      <h3>About</h3>
+      <p class="about-desc">
+        Interactive waiting room TV kiosk for Raspberry Pi. Guests scan a QR code, enter a PIN, and pick a video to play on the shared screen.
+      </p>
+      <a class="about-link" href="https://alwaysunpredictable.github.io/pitv/">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0z"/></svg>
+        alwaysunpredictable.github.io/pitv
+      </a>
+      <div class="topics">
+        <span class="topic">raspberry-pi</span>
+        <span class="topic">kiosk</span>
+        <span class="topic">flask</span>
+        <span class="topic">python</span>
+        <span class="topic">mpv</span>
+        <span class="topic">self-hosted</span>
+        <span class="topic">waiting-room</span>
+      </div>
+    </div>
+
+    <a class="gh-btn" href="https://github.com/alwaysunpredictable/pitv">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      View source on GitHub
     </a>
-    <a class="btn btn-secondary" href="https://github.com/alwaysunpredictable/pitv#readme">
-      Read the Docs
-    </a>
+
+    <div class="about-box">
+      <h3>Tech Stack</h3>
+      <div class="about-meta">
+        <div class="meta-row">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:#3fb950"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          Raspberry Pi 5 &amp; Pi OS Bookworm
+        </div>
+        <div class="meta-row">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:#3fb950"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          Python · Flask · Gunicorn
+        </div>
+        <div class="meta-row">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:#3fb950"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          SQLite · mpv · Chromium kiosk
+        </div>
+        <div class="meta-row">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color:#3fb950"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          Wayland · labwc · systemd
+        </div>
+      </div>
+    </div>
+
+    <div class="license-box">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8.75.75V2h.985c.304 0 .603.08.867.231l1.29.736c.038.022.08.033.124.033h2.234a.75.75 0 0 1 0 1.5h-.427l2.111 4.692a.75.75 0 0 1-.154.838l-.53-.53.529.531-.001.002-.002.002-.006.006-.016.015-.056.04a4.553 4.553 0 0 1-.433.247 10.184 10.184 0 0 1-1.32.539 9.972 9.972 0 0 1-2.957.405 9.972 9.972 0 0 1-2.957-.405 10.184 10.184 0 0 1-1.319-.54 4.553 4.553 0 0 1-.433-.246.75.75 0 0 1-.154-.838l2.11-4.692H3.75a.75.75 0 0 1 0-1.5h2.234a.25.25 0 0 0 .125-.033l1.29-.736A1.75 1.75 0 0 1 8.25 2h.5V.75a.75.75 0 0 1 1.5 0z"/>
+      </svg>
+      MIT License
+    </div>
+
   </div>
-</header>
-
-<main>
-
-  <img class="preview"
-       src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
-       alt="pitv TV screen showing QR code and PIN">
-
-  <!-- How it works -->
-  <h2>How It Works</h2>
-  <div class="how">
-    <div class="step">
-      <div class="step-num">Step 1</div>
-      <h3>Scan the QR Code</h3>
-      <p>The TV displays a QR code and 4-digit PIN while idle. Guests scan with any phone — no app needed.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">Step 2</div>
-      <h3>Enter the PIN</h3>
-      <p>The first person to enter the PIN becomes the controller for this round.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">Step 3</div>
-      <h3>Pick a Video</h3>
-      <p>Browse the grid and choose a title. Once you pick, it plays on the big screen immediately.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">Step 4</div>
-      <h3>Watch Together</h3>
-      <p>The video plays to completion. Others see a now-playing screen with poster art. A fresh PIN is issued for the next round.</p>
-    </div>
-  </div>
-
-  <!-- Features -->
-  <h2>Features</h2>
-  <div class="features">
-    <div class="feature">
-      <h3>No App Required</h3>
-      <p>Everything runs in the phone's browser. Guests just scan and go.</p>
-    </div>
-    <div class="feature">
-      <h3>Choose Wisely</h3>
-      <p>Videos play to the end in normal mode — no one can stop someone else's pick.</p>
-    </div>
-    <div class="feature">
-      <h3>Free Play Mode</h3>
-      <p>Skip the PIN entirely. Anyone can pick or stop videos — great for personal use or relaxed environments.</p>
-    </div>
-    <div class="feature">
-      <h3>Admin Panel</h3>
-      <p>Force-reset, play any video, reboot the Pi, and toggle modes — all from a password-protected web page.</p>
-    </div>
-    <div class="feature">
-      <h3>Easy Content Management</h3>
-      <p>Drop a video file and a poster image into a named folder under <code>media/</code>. That's it.</p>
-    </div>
-    <div class="feature">
-      <h3>Runs Locally</h3>
-      <p>No cloud, no subscriptions, no internet required. Everything stays on your local network.</p>
-    </div>
-  </div>
-
-  <!-- Screenshots -->
-  <h2>Screenshots</h2>
-  <div class="shots">
-    <div>
-      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
-           alt="TV screen — QR code and PIN">
-      <div class="shot-label">TV — QR code &amp; PIN</div>
-    </div>
-    <div>
-      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/pickavideo.png"
-           alt="Phone — video picker grid">
-      <div class="shot-label">Phone — video picker</div>
-    </div>
-    <div>
-      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/nowplaying.png"
-           alt="Phone — now playing screen">
-      <div class="shot-label">Phone — now playing</div>
-    </div>
-    <div>
-      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/Admin.png"
-           alt="Admin panel">
-      <div class="shot-label">Admin panel</div>
-    </div>
-  </div>
-
-  <!-- Stack -->
-  <h2>Built With</h2>
-  <div class="stack-grid">
-    <span class="tag">Raspberry Pi 5</span>
-    <span class="tag">Python / Flask</span>
-    <span class="tag">Gunicorn</span>
-    <span class="tag">SQLite</span>
-    <span class="tag">mpv</span>
-    <span class="tag">Chromium Kiosk</span>
-    <span class="tag">Wayland / labwc</span>
-    <span class="tag">systemd</span>
-    <span class="tag">Raspberry Pi OS Bookworm</span>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta">
-    <h2>Get Started</h2>
-    <p>Clone the repo, run the setup script, and you're up in minutes.</p>
-    <a class="btn btn-primary" href="https://github.com/alwaysunpredictable/pitv">
-      View on GitHub
-    </a>
-  </div>
-
-</main>
+</div>
 
 <footer>
-  pitv is open source — MIT License
+  <a href="https://github.com/alwaysunpredictable/pitv">github.com/alwaysunpredictable/pitv</a>
+  &nbsp;·&nbsp; MIT License
 </footer>
 
 </body>
