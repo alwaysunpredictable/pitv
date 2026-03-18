@@ -119,8 +119,7 @@ media/
     └── My Other Video.jpg
 ```
 
-The poster image is required — videos without one won't appear in the picker.
-Portrait ratio (2:3) works best for the poster.
+The poster image is optional — videos without one will appear in the picker with a placeholder card. Portrait ratio (2:3) works best for the poster.
 
 Supported video formats: `.mp4`, `.mkv`, `.mov`, `.avi`
 Supported poster formats: `.webp`, `.png`, `.jpg`, `.jpeg`
