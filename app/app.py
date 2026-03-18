@@ -162,12 +162,12 @@ def list_titles():
     for sub in sorted([p for p in MEDIA.iterdir() if p.is_dir()], key=lambda x: x.name.lower()):
         vid    = _first(sub, _VIDEO)
         poster = _first(sub, _POSTER)
-        if not vid or not poster:
+        if not vid:
             continue
         out.append({
             "key":    sub.name,
             "title":  sub.name,
-            "poster": poster.relative_to(MEDIA).as_posix(),
+            "poster": poster.relative_to(MEDIA).as_posix() if poster else None,
             "video":  vid.relative_to(MEDIA).as_posix(),
         })
     return out

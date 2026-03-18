@@ -96,7 +96,14 @@
   {% if titles %}
     {% for t in titles %}
     <div class="card" data-key="{{ t.key }}" data-title="{{ t.title }}">
+      {% if t.poster %}
       <img src="{{ url_for('poster', rel=t.poster) }}" alt="{{ t.title }}" loading="lazy">
+      {% else %}
+      <div style="width:100%;aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">No poster image</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Add an image file to this video's folder to display artwork here.</div>
+      </div>
+      {% endif %}
       <div class="card-title">{{ t.title }}</div>
     </div>
     {% endfor %}
