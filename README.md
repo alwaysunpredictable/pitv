@@ -156,7 +156,7 @@ sudo journalctl -u pitv-player -f   # live player logs
 
 ## Manual display restart (without rebooting)
 
-If Chromium closes, labwc will not auto-relaunch it. Either reboot or run:
+Test, If Chromium closes, labwc will not auto-relaunch it. Either reboot or run:
 
 ```bash
 WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 \
