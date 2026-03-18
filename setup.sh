@@ -155,6 +155,54 @@ EOF
 chown -R "$APP_USER:$APP_USER" "$LABWC_DIR"
 ok "labwc autostart created"
 
+# ── Blank cursor theme (hide cursor on Wayland kiosk) ─────────────────────────
+CURSOR_DIR="/home/$APP_USER/.local/share/icons/blank-cursor/cursors"
+mkdir -p "$CURSOR_DIR"
+python3 << 'PYEOF'
+import struct, pathlib, os, sys
+
+app_user = os.environ.get('APP_USER', 'pitv')
+base = pathlib.Path(f'/home/{app_user}/.local/share/icons/blank-cursor/cursors')
+base.mkdir(parents=True, exist_ok=True)
+
+# Minimal 1x1 transparent XCursor file
+data  = b'Xcur'
+data += struct.pack('<I', 16)            # header size
+data += struct.pack('<I', 0x10000)       # version
+data += struct.pack('<I', 1)             # ntoc
+data += struct.pack('<III', 0xfffd0002, 32, 28)   # toc entry: type, subtype, offset
+data += struct.pack('<IIIIIIIII', 40, 0xfffd0002, 32, 1, 1, 1, 0, 0, 100)  # image header
+data += b'\x00\x00\x00\x00'             # 1 transparent ARGB pixel
+
+(base / 'left_ptr').write_bytes(data)
+names = ['default','top_left_arrow','pointer','hand1','hand2','watch','wait',
+         'xterm','crosshair','move','fleur','not-allowed','no-drop','grab',
+         'grabbing','col-resize','row-resize','n-resize','s-resize','e-resize',
+         'w-resize','ne-resize','nw-resize','se-resize','sw-resize','ns-resize',
+         'ew-resize','nesw-resize','nwse-resize','zoom-in','zoom-out','text',
+         'help','progress','context-menu','cell','copy','alias','all-scroll']
+for n in names:
+    p = base / n
+    if not p.exists():
+        p.symlink_to('left_ptr')
+print('Blank cursor theme created')
+PYEOF
+chown -R "$APP_USER:$APP_USER" "/home/$APP_USER/.local"
+
+cat > "$LABWC_DIR/rc.xml" << 'XML'
+<?xml version="1.0"?>
+<openbox_config>
+  <theme>
+    <cursor>
+      <theme>blank-cursor</theme>
+      <size>1</size>
+    </cursor>
+  </theme>
+</openbox_config>
+XML
+chown "$APP_USER:$APP_USER" "$LABWC_DIR/rc.xml"
+ok "Blank cursor theme installed"
+
 # ── 10. LightDM autologin ─────────────────────────────────────────────────────
 LIGHTDM_CONF="/etc/lightdm/lightdm.conf"
 if [ -f "$LIGHTDM_CONF" ]; then
