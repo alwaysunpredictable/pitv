@@ -549,9 +549,9 @@
       <div class="install-block">
         <span class="prompt">$ </span><span class="cmd">git clone https://github.com/alwaysunpredictable/pitv.git waiting-room</span><br>
         <span class="prompt">$ </span><span class="cmd">cd waiting-room</span><br>
-        <span class="prompt">$ </span><span class="cmd">printf 'APP_SECRET=\nADMIN_PASS=changeme\n' &gt; config.env  <span style="color:#8b949e"># change ADMIN_PASS; APP_SECRET is auto-generated</span></span><br>
         <span class="prompt">$ </span><span class="cmd">sudo bash setup.sh && sudo reboot</span>
       </div>
+      <p>Before running setup, create a <code>config.env</code> file in the <code>waiting-room</code> folder containing <code>APP_SECRET=</code> and <code>ADMIN_PASS=yourpassword</code>. Leave <code>APP_SECRET</code> blank — setup generates it automatically.</p>
       <p>The setup script handles packages, virtual environment, systemd services, and autologin. See the <a href="https://github.com/alwaysunpredictable/pitv#readme">full README</a> for details.</p>
 
     </div>
