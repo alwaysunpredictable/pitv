@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pitv — Waiting Room TV Kiosk</title>
+  <meta name="description" content="Turn a Raspberry Pi into an interactive waiting room TV kiosk. Guests scan a QR code, enter a PIN, and pick a video to play on the shared screen.">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alwaysunpredictable.github.io/pitv/">
+  <meta property="og:title" content="pitv — Waiting Room TV Kiosk">
+  <meta property="og:description" content="Turn a Raspberry Pi into an interactive waiting room TV kiosk. Guests scan a QR code, enter a PIN, and pick a video to play on the shared screen.">
+  <meta property="og:image" content="https://alwaysunpredictable.github.io/pitv/preview.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0B0B10;
+      --bg2:       #13131C;
+      --border:    #22222E;
+      --amber:     #C9973A;
+      --amber-dim: #a07828;
+      --text:      #E8E4DC;
+      --muted:     #888;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--amber);
+    }
+
+    .tagline {
+      margin-top: .5rem;
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      margin-top: 1.8rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .65rem 1.4rem;
+      border-radius: 6px;
+      font-size: .95rem;
+      font-weight: 600;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; text-decoration: none; }
+
+    .btn-primary {
+      background: var(--amber);
+      color: #0B0B10;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /* ── Preview image ── */
+    .preview {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 3rem;
+      display: block;
+    }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--amber);
+      margin-bottom: 1rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── How it works ── */
+    .how {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem 1.3rem;
+    }
+
+    .step-num {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: .35rem;
+    }
+
+    .step p {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Features ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .feature {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem 1.3rem;
+    }
+
+    .feature h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: .35rem;
+    }
+
+    .feature p {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Screenshots ── */
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .shots img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .shot-label {
+      text-align: center;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .4rem;
+    }
+
+    /* ── Stack ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-bottom: 3rem;
+    }
+
+    .tag {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .3rem .8rem;
+      font-size: .85rem;
+      color: var(--text);
+    }
+
+    /* ── CTA ── */
+    .cta {
+      text-align: center;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2.5rem 2rem;
+    }
+
+    .cta h2 {
+      border: none;
+      font-size: 1.4rem;
+      margin-bottom: .6rem;
+    }
+
+    .cta p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-size: .95rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">pitv</div>
+  <div class="tagline">Waiting Room TV Kiosk — powered by Raspberry Pi</div>
+  <div class="header-actions">
+    <a class="btn btn-primary" href="https://github.com/alwaysunpredictable/pitv">
+      View on GitHub
+    </a>
+    <a class="btn btn-secondary" href="https://github.com/alwaysunpredictable/pitv#readme">
+      Read the Docs
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <img class="preview"
+       src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
+       alt="pitv TV screen showing QR code and PIN">
+
+  <!-- How it works -->
+  <h2>How It Works</h2>
+  <div class="how">
+    <div class="step">
+      <div class="step-num">Step 1</div>
+      <h3>Scan the QR Code</h3>
+      <p>The TV displays a QR code and 4-digit PIN while idle. Guests scan with any phone — no app needed.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 2</div>
+      <h3>Enter the PIN</h3>
+      <p>The first person to enter the PIN becomes the controller for this round.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 3</div>
+      <h3>Pick a Video</h3>
+      <p>Browse the grid and choose a title. Once you pick, it plays on the big screen immediately.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 4</div>
+      <h3>Watch Together</h3>
+      <p>The video plays to completion. Others see a now-playing screen with poster art. A fresh PIN is issued for the next round.</p>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <h2>Features</h2>
+  <div class="features">
+    <div class="feature">
+      <h3>No App Required</h3>
+      <p>Everything runs in the phone's browser. Guests just scan and go.</p>
+    </div>
+    <div class="feature">
+      <h3>Choose Wisely</h3>
+      <p>Videos play to the end in normal mode — no one can stop someone else's pick.</p>
+    </div>
+    <div class="feature">
+      <h3>Free Play Mode</h3>
+      <p>Skip the PIN entirely. Anyone can pick or stop videos — great for personal use or relaxed environments.</p>
+    </div>
+    <div class="feature">
+      <h3>Admin Panel</h3>
+      <p>Force-reset, play any video, reboot the Pi, and toggle modes — all from a password-protected web page.</p>
+    </div>
+    <div class="feature">
+      <h3>Easy Content Management</h3>
+      <p>Drop a video file and a poster image into a named folder under <code>media/</code>. That's it.</p>
+    </div>
+    <div class="feature">
+      <h3>Runs Locally</h3>
+      <p>No cloud, no subscriptions, no internet required. Everything stays on your local network.</p>
+    </div>
+  </div>
+
+  <!-- Screenshots -->
+  <h2>Screenshots</h2>
+  <div class="shots">
+    <div>
+      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/tv.png"
+           alt="TV screen — QR code and PIN">
+      <div class="shot-label">TV — QR code &amp; PIN</div>
+    </div>
+    <div>
+      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/pickavideo.png"
+           alt="Phone — video picker grid">
+      <div class="shot-label">Phone — video picker</div>
+    </div>
+    <div>
+      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/nowplaying.png"
+           alt="Phone — now playing screen">
+      <div class="shot-label">Phone — now playing</div>
+    </div>
+    <div>
+      <img src="https://raw.githubusercontent.com/alwaysunpredictable/pitv/main/screenshots/Admin.png"
+           alt="Admin panel">
+      <div class="shot-label">Admin panel</div>
+    </div>
+  </div>
+
+  <!-- Stack -->
+  <h2>Built With</h2>
+  <div class="stack-grid">
+    <span class="tag">Raspberry Pi 5</span>
+    <span class="tag">Python / Flask</span>
+    <span class="tag">Gunicorn</span>
+    <span class="tag">SQLite</span>
+    <span class="tag">mpv</span>
+    <span class="tag">Chromium Kiosk</span>
+    <span class="tag">Wayland / labwc</span>
+    <span class="tag">systemd</span>
+    <span class="tag">Raspberry Pi OS Bookworm</span>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>Get Started</h2>
+    <p>Clone the repo, run the setup script, and you're up in minutes.</p>
+    <a class="btn btn-primary" href="https://github.com/alwaysunpredictable/pitv">
+      View on GitHub
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  pitv is open source — MIT License
+</footer>
+
+</body>
+</html>
